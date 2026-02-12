@@ -1,0 +1,3 @@
+arxiv>=2.1.0
+anthropic>=0.40.0
+pyyaml>=6.0

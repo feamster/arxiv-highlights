@@ -1,0 +1,13 @@
+{
+  "weeks": [
+    {
+      "week": "2026-W06",
+      "date_range": {
+        "start": "2026-02-05",
+        "end": "2026-02-12"
+      },
+      "paper_count": 67,
+      "path": "2026-W06/papers.json"
+    }
+  ]
+}

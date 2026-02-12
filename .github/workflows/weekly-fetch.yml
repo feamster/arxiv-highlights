@@ -1,0 +1,58 @@
+name: NetML Weekly Papers
+
+on:
+  schedule:
+    - cron: '0 14 * * 1'  # Monday 8am CT (14:00 UTC)
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD). Default: 7 days ago.'
+        required: false
+      end_date:
+        description: 'End date (YYYY-MM-DD). Default: today.'
+        required: false
+      max_papers:
+        description: 'Max papers to fetch.'
+        required: false
+        default: '100'
+      summarize:
+        description: 'Generate Claude summaries (requires ANTHROPIC_API_KEY secret)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  fetch-papers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch papers
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS=""
+          [ -n "${{ github.event.inputs.start_date }}" ] && ARGS="$ARGS --start ${{ github.event.inputs.start_date }}"
+          [ -n "${{ github.event.inputs.end_date }}" ] && ARGS="$ARGS --end ${{ github.event.inputs.end_date }}"
+          [ -n "${{ github.event.inputs.max_papers }}" ] && ARGS="$ARGS --max-papers ${{ github.event.inputs.max_papers }}"
+          [ "${{ github.event.inputs.summarize }}" = "true" ] && ARGS="$ARGS --summarize"
+          python fetch_papers.py $ARGS
+
+      - name: Commit and push
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add weekly/
+          WEEK=$(date +%Y-W%V)
+          git diff --staged --quiet || git commit -m "NetML Weekly — $WEEK"
+          git push

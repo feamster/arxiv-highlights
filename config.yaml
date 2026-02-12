@@ -1,0 +1,74 @@
+# config.yaml
+
+# arXiv search queries. Each query is run separately, results are deduplicated.
+# These define the scope of "NetML" — tune as the field evolves.
+queries:
+  # ML/DL papers in the networking category
+  - 'cat:cs.NI AND ("machine learning" OR "deep learning" OR "neural network")'
+
+  # Traffic analysis & classification
+  - '("network traffic" OR "traffic classification" OR "traffic analysis") AND ("machine learning" OR "deep learning" OR "transformer")'
+
+  # Internet / network measurement + ML
+  - '("internet measurement" OR "network measurement") AND ("machine learning" OR "deep learning")'
+
+  # Congestion control / transport + ML
+  - '("congestion control" OR "transport protocol") AND ("reinforcement learning" OR "deep learning")'
+
+  # SDN / network management + ML
+  - '("software defined networking" OR "network management" OR "network operations") AND ("machine learning" OR "deep learning")'
+
+  # Network security + ML
+  - '("intrusion detection" OR "anomaly detection" OR "network security") AND ("machine learning" OR "deep learning" OR "neural network")'
+
+  # Generative models for networking
+  - '("network traffic" OR "packet" OR "netflow") AND ("generative" OR "diffusion model" OR "GAN" OR "large language model")'
+
+  # DNS / CDN / Web + ML
+  - '("DNS" OR "CDN" OR "web performance") AND ("machine learning" OR "deep learning")'
+
+  # IoT + ML networking
+  - '("IoT" OR "internet of things") AND ("network" OR "traffic") AND ("machine learning" OR "federated learning")'
+
+  # Wireless / cellular + ML
+  - '("wireless network" OR "cellular network" OR "5G" OR "spectrum") AND ("deep learning" OR "reinforcement learning")'
+
+# Allowed topic tags for categorization. Claude picks 2-4 per paper.
+tags:
+  - traffic-classification
+  - anomaly-detection
+  - congestion-control
+  - network-measurement
+  - network-security
+  - generative-models
+  - federated-learning
+  - reinforcement-learning
+  - SDN
+  - IoT
+  - DNS
+  - CDN
+  - web-performance
+  - routing
+  - wireless
+  - LLM
+  - diffusion-models
+  - graph-neural-networks
+  - time-series
+  - transformer
+  - network-management
+  - QoS
+  - spectrum
+  - edge-computing
+
+# Fetch settings
+fetch:
+  max_per_query: 50        # Max results per individual query
+  max_total: 100           # Max total papers per week
+  lookback_days: 7         # Default date range
+  arxiv_delay_seconds: 3.0 # Rate limiting (be nice to arXiv)
+  arxiv_retries: 3
+
+# Claude settings for summarization (optional - can be added later)
+claude:
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 600
