@@ -10,12 +10,23 @@ Each week includes:
 - **papers.json** — Machine-readable metadata, abstracts, and links
 - **README.md** — Human-readable digest with author information
 
+## Submit Your Paper
+
+Authors can submit their papers directly for inclusion in the next digest:
+
+1. Fork this repo
+2. Add your paper's arXiv ID to [`submissions.yaml`](./submissions.yaml)
+3. Open a PR
+
+Submitted papers are fetched and included alongside the automated search results.
+
 ## How it works
 
 1. Every Monday, a GitHub Action queries arXiv for recent papers matching NetML-relevant search terms
-2. Results are deduplicated and filtered by date
-3. Output is committed to this repo as a weekly digest
-4. Optionally, Claude can generate concise summaries with inferred author affiliations
+2. Author-submitted papers from `submissions.yaml` are also fetched
+3. Results are deduplicated and filtered
+4. Output is committed to this repo as a weekly digest
+5. Optionally, Claude can generate concise summaries with inferred author affiliations
 
 ## Running locally
 

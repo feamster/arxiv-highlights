@@ -1,0 +1,24 @@
+# Author Submissions
+#
+# Want your paper included in NetML Weekly? Add it here!
+#
+# Instructions:
+# 1. Fork this repo
+# 2. Add your paper's arXiv ID below
+# 3. Open a PR
+#
+# Format:
+#   - id: "2602.12345"           # Required: arXiv ID (with or without version)
+#     submitter: "Your Name"     # Optional: who submitted it
+#     note: "Brief note"         # Optional: why it's relevant to NetML
+#
+# Papers are reviewed and included in the next weekly digest.
+# We accept papers at the intersection of ML and networking.
+
+papers: []
+
+# Example (commented out):
+# papers:
+#   - id: "2602.12345"
+#     submitter: "Jane Doe"
+#     note: "New approach to traffic classification using transformers"
