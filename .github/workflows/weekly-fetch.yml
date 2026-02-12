@@ -2,7 +2,7 @@ name: NetML Weekly Papers
 
 on:
   schedule:
-    - cron: '0 14 * * 1'  # Monday 8am CT (14:00 UTC)
+    - cron: '0 5 * * 1'  # Sunday 11pm CT (05:00 UTC Monday)
   workflow_dispatch:
     inputs:
       start_date:
