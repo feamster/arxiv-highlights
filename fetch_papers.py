@@ -340,6 +340,8 @@ def generate_readme(week_data: dict) -> str:
                 lines.append(f"**Authors:** {paper['authors']}")
                 lines.append(f"[arXiv]({paper['arxiv_url']}) · [PDF]({paper['pdf_url']})")
                 lines.append("")
+                lines.append(paper["summary"])
+                lines.append("")
 
             lines.append("---")
             lines.append("")
