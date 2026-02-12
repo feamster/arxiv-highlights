@@ -4,7 +4,7 @@
     "start": "2026-02-05",
     "end": "2026-02-12"
   },
-  "generated": "2026-02-12T07:42:16.448660+00:00",
+  "generated": "2026-02-12T07:53:40.180616+00:00",
   "paper_count": 67,
   "papers": [
     {
@@ -1067,6 +1067,177 @@
       "abstract": "Density functional theory (DFT) and linear-response time-dependent density functional theory (LR-TDDFT) rely on an exchange-correlation (xc) approximation that provides not only energy but also its functional derivatives that enter the self-consistent potential and the response kernel. Here we present an end-to-end differentiable workflow to optimize a single deep-learned energy functional using targets from both Kohn-Sham DFT and adiabatic LR-TDDFT within the Tamm-Dancoff approximation. Implemented in a JAX-based two-component quantum chemistry code (IQC), the learned functional yields a consistent potential and LR kernel via automatic differentiation, enabling gradient-based training through the SCF fixed point and the Casida equation. As a proof of concept in a fixed finite basis (cc-pVDZ), we learn an exchange-correlation functional on the helium spectrum while incorporating one-electron self-interaction cancelation and the Lieb-Oxford inequality as penalty terms, and we assess its possible transfer to molecular test cases.",
       "summary": "Density functional theory (DFT) and linear-response time-dependent density functional theory (LR-TDDFT) rely on an exchange-correlation (xc) approximation that provides not only energy but also its functional derivatives that enter the self-consistent potential and the response kernel. Here we present an end-to-end differentiable workflow to optimize a single deep-learned energy functional using targets from both Kohn-Sham DFT and adiabatic LR-TDDFT within the Tamm-Dancoff approximation. Implemented in a JAX-based two-component quantum chemistry code (IQC), the learned functional yields a consistent potential and LR kernel via automatic differentiation, enabling gradient-based training through the SCF fixed point and the Casida equation. As a proof of concept in a fixed finite basis (cc-pVDZ), we learn an exchange-correlation functional on the helium spectrum while incorporating one-electron self-interaction cancelation and the Lieb-Oxford inequality as penalty terms, and we assess its possible transfer to molecular test cases.",
       "tags": []
+    }
+  ],
+  "sessions": [
+    {
+      "title": "Information Theory",
+      "description": "Papers in Information Theory",
+      "papers": [
+        1,
+        32,
+        44
+      ]
+    },
+    {
+      "title": "Networking",
+      "description": "Papers in Networking",
+      "papers": [
+        2,
+        3,
+        9,
+        11,
+        23,
+        24,
+        33,
+        39,
+        49,
+        50,
+        57,
+        60
+      ]
+    },
+    {
+      "title": "eess.SY",
+      "description": "Papers in eess.SY",
+      "papers": [
+        4,
+        35
+      ]
+    },
+    {
+      "title": "Security & Privacy",
+      "description": "Papers in Security & Privacy",
+      "papers": [
+        5,
+        8,
+        31,
+        41,
+        45,
+        46,
+        55,
+        56,
+        59,
+        63
+      ]
+    },
+    {
+      "title": "Machine Learning",
+      "description": "Papers in Machine Learning",
+      "papers": [
+        6,
+        7,
+        12,
+        14,
+        15,
+        17,
+        21,
+        22,
+        27,
+        28,
+        29,
+        30,
+        37,
+        40,
+        42,
+        51,
+        53,
+        54,
+        61,
+        62,
+        66
+      ]
+    },
+    {
+      "title": "cs.HC",
+      "description": "Papers in cs.HC",
+      "papers": [
+        10
+      ]
+    },
+    {
+      "title": "stat.ME",
+      "description": "Papers in stat.ME",
+      "papers": [
+        13
+      ]
+    },
+    {
+      "title": "cs.MM",
+      "description": "Papers in cs.MM",
+      "papers": [
+        16
+      ]
+    },
+    {
+      "title": "cs.RO",
+      "description": "Papers in cs.RO",
+      "papers": [
+        18
+      ]
+    },
+    {
+      "title": "Signal Processing",
+      "description": "Papers in Signal Processing",
+      "papers": [
+        19,
+        20,
+        26,
+        34,
+        36,
+        38
+      ]
+    },
+    {
+      "title": "astro-ph.IM",
+      "description": "Papers in astro-ph.IM",
+      "papers": [
+        25
+      ]
+    },
+    {
+      "title": "math-ph",
+      "description": "Papers in math-ph",
+      "papers": [
+        43
+      ]
+    },
+    {
+      "title": "physics.geo-ph",
+      "description": "Papers in physics.geo-ph",
+      "papers": [
+        47
+      ]
+    },
+    {
+      "title": "quant-ph",
+      "description": "Papers in quant-ph",
+      "papers": [
+        48
+      ]
+    },
+    {
+      "title": "cs.CV",
+      "description": "Papers in cs.CV",
+      "papers": [
+        52,
+        64,
+        65
+      ]
+    },
+    {
+      "title": "eess.IV",
+      "description": "Papers in eess.IV",
+      "papers": [
+        58
+      ]
+    },
+    {
+      "title": "physics.chem-ph",
+      "description": "Papers in physics.chem-ph",
+      "papers": [
+        67
+      ]
     }
   ]
 }

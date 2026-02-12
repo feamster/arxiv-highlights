@@ -192,6 +192,82 @@ Abstract: {paper.summary}"""
         }
 
 
+def cluster_papers(paper_dicts: list[dict], client: "anthropic.Anthropic") -> dict:
+    """Use Claude to cluster papers into thematic sessions."""
+    # Build a compact list of papers for Claude
+    paper_list = "\n".join(
+        f"{i+1}. {p['title']}"
+        for i, p in enumerate(paper_dicts)
+    )
+
+    prompt = f"""You are organizing papers for "NetML Weekly" — a digest of ML + networking papers.
+
+Group these {len(paper_dicts)} papers into 5-10 thematic sessions, like a conference program.
+Each session should have 2-6 papers. Every paper must be assigned to exactly one session.
+
+Return ONLY valid JSON with this structure:
+{{
+  "sessions": [
+    {{
+      "title": "Session Title (e.g., 'Traffic Analysis & Classification')",
+      "description": "One sentence describing the session theme",
+      "papers": [1, 5, 12]  // paper numbers from the list below
+    }}
+  ]
+}}
+
+Papers:
+{paper_list}"""
+
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        content = response.content[0].text
+        content = re.sub(r'^```json\s*', '', content)
+        content = re.sub(r'^```\s*', '', content)
+        content = re.sub(r'\s*```$', '', content)
+
+        return json.loads(content)
+
+    except Exception as e:
+        print(f"  Clustering failed: {e}")
+        return None
+
+
+def cluster_by_category(paper_dicts: list[dict]) -> dict:
+    """Fallback: cluster papers by arXiv primary category."""
+    category_names = {
+        "cs.NI": "Networking",
+        "cs.LG": "Machine Learning",
+        "cs.CR": "Security & Privacy",
+        "cs.AI": "Artificial Intelligence",
+        "cs.DC": "Distributed Computing",
+        "cs.IT": "Information Theory",
+        "eess.SP": "Signal Processing",
+        "stat.ML": "Statistical ML",
+    }
+
+    clusters = {}
+    for i, p in enumerate(paper_dicts):
+        cat = p["primary_category"]
+        name = category_names.get(cat, cat)
+        if name not in clusters:
+            clusters[name] = []
+        clusters[name].append(i + 1)
+
+    return {
+        "sessions": [
+            {"title": name, "description": f"Papers in {name}", "papers": indices}
+            for name, indices in clusters.items()
+            if indices
+        ]
+    }
+
+
 def paper_to_dict(paper: arxiv.Result, summary_data: dict = None) -> dict:
     """Convert an arxiv.Result to our JSON format."""
     # Use summary data if provided, otherwise use raw metadata
@@ -221,9 +297,9 @@ def paper_to_dict(paper: arxiv.Result, summary_data: dict = None) -> dict:
 
 def generate_readme(week_data: dict) -> str:
     """Generate the human-readable README.md for a week."""
-    week = week_data["week"]
     date_range = week_data["date_range"]
     papers = week_data["papers"]
+    sessions = week_data.get("sessions")
 
     # Parse the start date for display
     start = datetime.strptime(date_range["start"], "%Y-%m-%d")
@@ -234,26 +310,53 @@ def generate_readme(week_data: dict) -> str:
         "",
         f"*{len(papers)} papers at the intersection of machine learning and computer networking.*",
         "",
-        "---",
-        "",
     ]
 
-    for i, paper in enumerate(papers, 1):
-        lines.append(f"### {i}. {paper['title']}")
+    # Table of contents if we have sessions
+    if sessions:
+        lines.append("## Sessions")
         lines.append("")
-        lines.append(f"**Authors:** {paper['authors']}")
-        categories_str = ", ".join(paper["categories"])
-        lines.append(f"**Published:** {paper['published']} | **Categories:** {categories_str}")
-        lines.append(f"[arXiv]({paper['arxiv_url']}) · [PDF]({paper['pdf_url']})")
+        for session in sessions:
+            anchor = session["title"].lower().replace(" ", "-").replace("&", "").replace("--", "-")
+            lines.append(f"- [{session['title']}](#{anchor}) ({len(session['papers'])} papers)")
         lines.append("")
-        lines.append(paper["summary"])
-        lines.append("")
-        if paper["tags"]:
-            tags_str = " · ".join(f"`{tag}`" for tag in paper["tags"])
-            lines.append(tags_str)
+
+    lines.append("---")
+    lines.append("")
+
+    if sessions:
+        # Organized by session
+        for session in sessions:
+            lines.append(f"## {session['title']}")
             lines.append("")
-        lines.append("---")
-        lines.append("")
+            if session.get("description"):
+                lines.append(f"*{session['description']}*")
+                lines.append("")
+
+            for paper_num in session["papers"]:
+                paper = papers[paper_num - 1]  # 1-indexed
+                lines.append(f"### {paper['title']}")
+                lines.append("")
+                lines.append(f"**Authors:** {paper['authors']}")
+                lines.append(f"[arXiv]({paper['arxiv_url']}) · [PDF]({paper['pdf_url']})")
+                lines.append("")
+
+            lines.append("---")
+            lines.append("")
+    else:
+        # Flat list fallback
+        for i, paper in enumerate(papers, 1):
+            lines.append(f"### {i}. {paper['title']}")
+            lines.append("")
+            lines.append(f"**Authors:** {paper['authors']}")
+            categories_str = ", ".join(paper["categories"])
+            lines.append(f"**Published:** {paper['published']} | **Categories:** {categories_str}")
+            lines.append(f"[arXiv]({paper['arxiv_url']}) · [PDF]({paper['pdf_url']})")
+            lines.append("")
+            lines.append(paper["summary"])
+            lines.append("")
+            lines.append("---")
+            lines.append("")
 
     return "\n".join(lines)
 
@@ -309,6 +412,11 @@ def main():
         "--summarize",
         action="store_true",
         help="Use Claude to generate summaries (requires ANTHROPIC_API_KEY).",
+    )
+    parser.add_argument(
+        "--no-organize",
+        action="store_true",
+        help="Skip organizing papers into sessions (flat list instead).",
     )
     parser.add_argument(
         "--dry-run",
@@ -397,6 +505,22 @@ def main():
     # Sort by published date (newest first)
     paper_dicts.sort(key=lambda p: p["published"], reverse=True)
 
+    # Cluster papers into sessions
+    sessions = None
+    if not args.no_organize:
+        print("\nOrganizing papers into sessions...")
+        if ANTHROPIC_AVAILABLE and os.environ.get("ANTHROPIC_API_KEY"):
+            client = anthropic.Anthropic()
+            clustering = cluster_papers(paper_dicts, client)
+            if clustering:
+                sessions = clustering.get("sessions")
+                print(f"  Created {len(sessions)} sessions")
+        if not sessions:
+            print("  Using arXiv categories as fallback...")
+            clustering = cluster_by_category(paper_dicts)
+            sessions = clustering.get("sessions")
+            print(f"  Created {len(sessions)} sessions")
+
     # Determine week string
     week = get_week_string(end_date)
 
@@ -410,6 +534,7 @@ def main():
         "generated": datetime.now(timezone.utc).isoformat(),
         "paper_count": len(paper_dicts),
         "papers": paper_dicts,
+        "sessions": sessions,
     }
 
     if args.dry_run:
