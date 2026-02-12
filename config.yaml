@@ -2,6 +2,12 @@
 
 # arXiv search queries. Each query is run separately, results are deduplicated.
 # These define the scope of "NetML" — tune as the field evolves.
+# All queries restricted to CS/EE categories to avoid astrophysics, chemistry, etc.
+
+# Relevant arXiv categories for filtering
+# cs.NI = Networking, cs.LG = Machine Learning, cs.CR = Security
+# cs.DC = Distributed Computing, cs.AI = AI, cs.SY/eess.SY = Systems & Control
+
 queries:
   # Author-tagged papers (authors add #NetML to their arXiv Comments field)
   - 'co:NetML'
@@ -9,32 +15,35 @@ queries:
   # ML/DL papers in the networking category
   - 'cat:cs.NI AND ("machine learning" OR "deep learning" OR "neural network")'
 
-  # Traffic analysis & classification
-  - '("network traffic" OR "traffic classification" OR "traffic analysis") AND ("machine learning" OR "deep learning" OR "transformer")'
+  # Traffic analysis & classification (must be in CS categories)
+  - '(cat:cs.NI OR cat:cs.CR OR cat:cs.LG) AND ("network traffic" OR "traffic classification") AND ("machine learning" OR "deep learning")'
 
   # Internet / network measurement + ML
-  - '("internet measurement" OR "network measurement") AND ("machine learning" OR "deep learning")'
+  - '(cat:cs.NI OR cat:cs.CR) AND ("internet measurement" OR "network measurement") AND ("machine learning" OR "deep learning")'
 
   # Congestion control / transport + ML
-  - '("congestion control" OR "transport protocol") AND ("reinforcement learning" OR "deep learning")'
+  - '(cat:cs.NI OR cat:cs.LG) AND ("congestion control" OR "transport protocol") AND ("reinforcement learning" OR "deep learning")'
 
   # SDN / network management + ML
-  - '("software defined networking" OR "network management" OR "network operations") AND ("machine learning" OR "deep learning")'
+  - '(cat:cs.NI OR cat:cs.DC) AND ("software defined networking" OR "SDN" OR "network management") AND ("machine learning" OR "deep learning")'
 
-  # Network security + ML
-  - '("intrusion detection" OR "anomaly detection" OR "network security") AND ("machine learning" OR "deep learning" OR "neural network")'
+  # Network security + ML (be specific about "network" to avoid generic anomaly detection)
+  - '(cat:cs.CR OR cat:cs.NI) AND ("intrusion detection" OR "network anomaly" OR "malware detection" OR "DDoS") AND ("machine learning" OR "deep learning")'
 
-  # Generative models for networking
-  - '("network traffic" OR "packet" OR "netflow") AND ("generative" OR "diffusion model" OR "GAN" OR "large language model")'
+  # Generative models for networking (specific to network traffic)
+  - '(cat:cs.NI OR cat:cs.CR OR cat:cs.LG) AND ("network traffic" OR "netflow") AND ("generative" OR "diffusion model" OR "GAN")'
 
   # DNS / CDN / Web + ML
-  - '("DNS" OR "CDN" OR "web performance") AND ("machine learning" OR "deep learning")'
+  - '(cat:cs.NI OR cat:cs.CR) AND ("DNS" OR "CDN" OR "web performance") AND ("machine learning" OR "deep learning")'
 
-  # IoT + ML networking
-  - '("IoT" OR "internet of things") AND ("network" OR "traffic") AND ("machine learning" OR "federated learning")'
+  # IoT networking + ML
+  - '(cat:cs.NI OR cat:cs.CR) AND ("IoT" OR "internet of things") AND ("network" OR "traffic") AND ("machine learning" OR "federated learning")'
 
-  # Wireless / cellular + ML
-  - '("wireless network" OR "cellular network" OR "5G" OR "spectrum") AND ("deep learning" OR "reinforcement learning")'
+  # Wireless / cellular networking + ML (specific networking terms)
+  - '(cat:cs.NI OR cat:eess.SP) AND ("wireless network" OR "cellular network" OR "5G" OR "spectrum sensing") AND ("deep learning" OR "reinforcement learning")'
+
+  # Federated learning for networking
+  - '(cat:cs.NI OR cat:cs.LG OR cat:cs.DC) AND "federated learning" AND ("network" OR "communication" OR "wireless")'
 
 # Allowed topic tags for categorization. Claude picks 2-4 per paper.
 tags:
