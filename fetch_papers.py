@@ -37,6 +37,16 @@ def get_week_string(date: datetime) -> str:
     return date.strftime("%Y-W%W")
 
 
+def get_week_bounds(date: datetime) -> tuple[datetime, datetime]:
+    """Get Monday 00:00 to Sunday 23:59 for the week containing the given date."""
+    # Find Monday of this week (weekday 0 = Monday)
+    days_since_monday = date.weekday()
+    monday = date - timedelta(days=days_since_monday)
+    monday = monday.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
+    sunday = monday + timedelta(days=6, hours=23, minutes=59, seconds=59)
+    return monday, sunday
+
+
 def fetch_papers(
     queries: list[str],
     start_date: datetime,
@@ -439,16 +449,13 @@ def main():
     fetch_config = config.get("fetch", {})
 
     # Determine date range
-    if args.end:
-        end_date = datetime.strptime(args.end, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    else:
-        end_date = datetime.now(timezone.utc).replace(hour=23, minute=59, second=59)
-
-    if args.start:
+    if args.start and args.end:
+        # Explicit range provided
         start_date = datetime.strptime(args.start, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        end_date = datetime.strptime(args.end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
     else:
-        lookback = fetch_config.get("lookback_days", 7)
-        start_date = (end_date - timedelta(days=lookback)).replace(hour=0, minute=0, second=0)
+        # Default: snap to current calendar week (Monday-Sunday) for idempotency
+        start_date, end_date = get_week_bounds(datetime.now(timezone.utc))
 
     # Determine max papers
     max_total = args.max_papers or fetch_config.get("max_total", 100)
