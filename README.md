@@ -12,7 +12,17 @@ Each week includes:
 
 ## Submit Your Paper
 
-Authors can submit their papers directly for inclusion in the next digest:
+### Option 1: Tag on arXiv (easiest)
+
+Add `#NetML` to your paper's **Comments** field on arXiv:
+
+```
+Comments: 12 pages, 5 figures. #NetML
+```
+
+Your paper will be automatically picked up in the next weekly digest. You can add this tag when submitting or update an existing paper's metadata anytime.
+
+### Option 2: Open a PR
 
 1. Fork this repo
 2. Add your paper's arXiv ID to [`submissions.yaml`](./submissions.yaml)

@@ -3,6 +3,9 @@
 # arXiv search queries. Each query is run separately, results are deduplicated.
 # These define the scope of "NetML" — tune as the field evolves.
 queries:
+  # Author-tagged papers (authors add #NetML to their arXiv Comments field)
+  - 'co:NetML'
+
   # ML/DL papers in the networking category
   - 'cat:cs.NI AND ("machine learning" OR "deep learning" OR "neural network")'
 
