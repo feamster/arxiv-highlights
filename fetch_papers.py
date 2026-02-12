@@ -37,11 +37,20 @@ def get_week_string(date: datetime) -> str:
     return date.strftime("%Y-W%W")
 
 
-def get_week_bounds(date: datetime) -> tuple[datetime, datetime]:
-    """Get Monday 00:00 to Sunday 23:59 for the week containing the given date."""
+def get_week_bounds(date: datetime, previous: bool = True) -> tuple[datetime, datetime]:
+    """Get Monday 00:00 to Sunday 23:59 for a week.
+
+    By default returns the *previous* week (the most recent complete week),
+    so running on Monday morning gives you all of last week's papers.
+    """
     # Find Monday of this week (weekday 0 = Monday)
     days_since_monday = date.weekday()
     monday = date - timedelta(days=days_since_monday)
+
+    if previous:
+        # Go back to previous week
+        monday = monday - timedelta(days=7)
+
     monday = monday.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
     sunday = monday + timedelta(days=6, hours=23, minutes=59, seconds=59)
     return monday, sunday
