@@ -12,8 +12,6 @@ Each week includes:
 
 ## Submit Your Paper
 
-### Option 1: Tag on arXiv (easiest)
-
 Add `#NetML` to your paper's **Comments** field on arXiv:
 
 ```
@@ -22,21 +20,12 @@ Comments: 12 pages, 5 figures. #NetML
 
 Your paper will be automatically picked up in the next weekly digest. You can add this tag when submitting or update an existing paper's metadata anytime.
 
-### Option 2: Open a PR
-
-1. Fork this repo
-2. Add your paper's arXiv ID to [`submissions.yaml`](./submissions.yaml)
-3. Open a PR
-
-Submitted papers are fetched and included alongside the automated search results.
-
 ## How it works
 
 1. Every Monday, a GitHub Action queries arXiv for recent papers matching NetML-relevant search terms
-2. Author-submitted papers from `submissions.yaml` are also fetched
-3. Results are deduplicated and filtered
-4. Output is committed to this repo as a weekly digest
-5. Optionally, Claude can generate concise summaries with inferred author affiliations
+2. Papers tagged with `#NetML` in their arXiv Comments are automatically included
+3. Results are deduplicated and committed as a weekly digest
+4. Optionally, Claude can generate concise summaries with inferred author affiliations
 
 ## Running locally
 

@@ -31,42 +31,6 @@ def load_config(config_path: str = "config.yaml") -> dict:
         return yaml.safe_load(f)
 
 
-def load_submissions(submissions_path: str = "submissions.yaml") -> list[str]:
-    """Load author-submitted paper IDs from submissions file."""
-    if not Path(submissions_path).exists():
-        return []
-    with open(submissions_path, "r") as f:
-        data = yaml.safe_load(f)
-    if not data or not data.get("papers"):
-        return []
-    return [p["id"] for p in data["papers"] if p.get("id")]
-
-
-def fetch_submitted_papers(
-    paper_ids: list[str],
-    delay_seconds: float = 3.0,
-) -> list[arxiv.Result]:
-    """Fetch specific papers by arXiv ID (from author submissions)."""
-    if not paper_ids:
-        return []
-
-    print(f"  Fetching {len(paper_ids)} author-submitted papers...")
-    client = arxiv.Client()
-    papers = []
-
-    # Fetch in batches to be nice to arXiv
-    for paper_id in paper_ids:
-        try:
-            search = arxiv.Search(id_list=[paper_id])
-            for result in client.results(search):
-                papers.append(result)
-                print(f"    Found: {result.title[:50]}...")
-            time.sleep(delay_seconds)
-        except Exception as e:
-            print(f"    Failed to fetch {paper_id}: {e}")
-
-    return papers
-
 
 def get_week_string(date: datetime) -> str:
     """Get ISO week string (e.g., '2026-W07') for a date."""
@@ -401,20 +365,7 @@ def main():
         retries=retries,
     )
 
-    print(f"  Found {len(papers)} papers from queries")
-
-    # Fetch author-submitted papers
-    submitted_ids = load_submissions()
-    if submitted_ids:
-        # Filter out already-fetched papers
-        seen_ids = {p.get_short_id() for p in papers}
-        new_ids = [pid for pid in submitted_ids if pid not in seen_ids and not any(pid in sid for sid in seen_ids)]
-        if new_ids:
-            submitted_papers = fetch_submitted_papers(new_ids, delay_seconds)
-            papers.extend(submitted_papers)
-            print(f"  Added {len(submitted_papers)} author-submitted papers")
-
-    print(f"\nTotal papers: {len(papers)}")
+    print(f"\nTotal papers found: {len(papers)}")
 
     if not papers:
         print("No papers found. Exiting.")
